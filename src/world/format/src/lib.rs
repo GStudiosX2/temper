@@ -161,7 +161,20 @@ impl Chunk {
         self.sections[section as usize].set_block(pos.section_block_pos(), id);
     }
 
-    /// Lazily gets the highest Y in the chunk
+    /// Get heightmap for entire chunk
+    pub fn get_full_heightmap(&self) -> [i16; 256usize] {
+        let mut heightmap = [0i16; 256];
+
+        for x in 0..=15 {
+            for z in 0..=15 {
+                heightmap[x as usize + (z as usize * 16)] = self.get_heightmap(x, z);
+            }
+        }
+        
+        heightmap
+    }
+    
+    /// Gets the highest Y in the chunk
     pub fn get_heightmap(&self, x: u8, z: u8) -> i16 {
         debug_assert!(x <= 16 && z <= 16);
 
