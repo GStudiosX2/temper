@@ -170,10 +170,10 @@ impl Chunk {
                 heightmap[x as usize + (z as usize * 16)] = self.get_heightmap(x, z);
             }
         }
-        
+
         heightmap
     }
-    
+
     /// Gets the highest Y in the chunk
     pub fn get_heightmap(&self, x: u8, z: u8) -> i16 {
         debug_assert!(x <= 16 && z <= 16);

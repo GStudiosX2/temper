@@ -252,7 +252,8 @@ impl ChunkSection {
         if id == AIR {
             if height >= current_height {
                 let mut section_pos =
-                    ChunkBlockPos::new(x, i16::from(current_height.max(height)), z).section_block_pos();
+                    ChunkBlockPos::new(x, i16::from(current_height.max(height)), z)
+                        .section_block_pos();
                 loop {
                     if self.inner.get_block(section_pos) != AIR {
                         self.world_surface.set_height(x, z, section_pos.y + 1);

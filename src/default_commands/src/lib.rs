@@ -4,6 +4,7 @@ pub mod deop;
 pub mod echo;
 pub mod fly;
 pub mod gamemode;
+mod heightmap;
 mod kill;
 pub mod nested;
 pub mod op;
@@ -14,7 +15,6 @@ mod stop;
 pub mod time;
 mod tp;
 pub mod tps;
-mod heightmap;
 
 /// Static library initialisation shenanigans.
 pub fn init() {}

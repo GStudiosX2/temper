@@ -6,8 +6,8 @@ use temper_core::pos::BlockPos;
 use temper_macros::command;
 use temper_messages::{particle::SendParticle, teleport_player::TeleportPlayer};
 use temper_net_runtime::connection::StreamWriter;
-use temper_state::GlobalStateResource;
 use temper_particles::ParticleType;
+use temper_state::GlobalStateResource;
 
 #[command("heightmap")]
 #[allow(unused_mut)]
@@ -18,7 +18,7 @@ fn heightmap_command(
         Query<(&Rotation, &Position, &StreamWriter)>,
         Res<GlobalStateResource>,
         MessageWriter<TeleportPlayer>,
-        MessageWriter<SendParticle>
+        MessageWriter<SendParticle>,
     ),
 ) {
     let (mut query, global_state, mut _tp_player_msg, mut send_particle) = args;
@@ -41,15 +41,23 @@ fn heightmap_command(
     for x in 0..=15 {
         for z in 0..=15 {
             let height = chunk.get_heightmap(x, z) + 1;
-            let pos = pos.chunk().chunk_block(BlockPos::of(x as i32, height as i32, z as i32).chunk_block_pos());
+            let pos = pos
+                .chunk()
+                .chunk_block(BlockPos::of(x as i32, height as i32, z as i32).chunk_block_pos());
 
-            for offset in [Vec3A::ZERO, Vec3A::new(0f32, 0f32, 1f32), Vec3A::new(1f32, 0f32, 0f32), Vec3A::new(1f32, 0f32, 1f32)] {
+            for offset in [
+                Vec3A::ZERO,
+                Vec3A::new(0f32, 0f32, 1f32),
+                Vec3A::new(1f32, 0f32, 0f32),
+                Vec3A::new(1f32, 0f32, 1f32),
+            ] {
                 send_particle.write(SendParticle {
                     particle_type: ParticleType::EndRod,
-                    position: Vec3A::new(pos.pos.x as f32, pos.pos.y as f32, pos.pos.z as f32) + offset,
+                    position: Vec3A::new(pos.pos.x as f32, pos.pos.y as f32, pos.pos.z as f32)
+                        + offset,
                     offset: Vec3A::ZERO,
                     speed: 0.0,
-                    count: 1
+                    count: 1,
                 });
             }
         }
