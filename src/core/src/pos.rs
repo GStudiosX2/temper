@@ -1,6 +1,7 @@
 use std::fmt::Display;
 use std::fmt::Formatter;
 use std::fmt::Result;
+use std::ops::DerefMut;
 use std::ops::Range;
 use std::ops::{Add, Deref};
 
@@ -390,5 +391,11 @@ impl Deref for SectionBlockPos {
 
     fn deref(&self) -> &Self::Target {
         &self.pos
+    }
+}
+
+impl DerefMut for SectionBlockPos {
+    fn deref_mut(&mut self) -> &mut Self::Target {
+        &mut self.pos
     }
 }

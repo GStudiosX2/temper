@@ -106,7 +106,7 @@ impl Chunk {
 
         let section = i16::from(y) + -self.height.min_y / 16;
 
-        self.sections[section as usize] = ChunkSection::new_uniform(state)
+        self.sections[section as usize] = ChunkSection::new_uniform(state);
     }
 
     /// Fills the entire chunk with the given block.
@@ -159,6 +159,20 @@ impl Chunk {
         assert!(section as usize <= self.sections.len());
 
         self.sections[section as usize].set_block(pos.section_block_pos(), id);
+    }
+
+    /// Lazily gets the highest Y in the chunk
+    pub fn get_heightmap(&self, x: u8, z: u8) -> i16 {
+        debug_assert!(x <= 16 && z <= 16);
+
+        for (section_index, section) in self.sections.iter().enumerate().rev() {
+            let height = section.world_surface.get_height(x, z);
+            if height != 0 {
+                return self.height.min_y + (section_index as i16 * 16) + i16::from(height) - 1;
+            }
+        }
+
+        0
     }
 
     /// Marks the chunk as dirty.

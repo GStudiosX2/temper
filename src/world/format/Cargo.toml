@@ -24,6 +24,7 @@ type_hash = { workspace = true }
 uuid = { workspace = true }
 temper-entities = { workspace = true }
 dashmap = { workspace = true }
+tracing = { workspace = true }
 
 [dev-dependencies]
 criterion = { workspace = true }

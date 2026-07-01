@@ -14,6 +14,7 @@ mod stop;
 pub mod time;
 mod tp;
 pub mod tps;
+mod heightmap;
 
 /// Static library initialisation shenanigans.
 pub fn init() {}

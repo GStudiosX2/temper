@@ -21,10 +21,12 @@ temper-state = { workspace = true }
 temper-resources = { workspace = true }
 temper-entities = { workspace = true }
 temper-permissions = { workspace = true }
+temper-particles = { workspace = true }
 
 ctor = { workspace = true }
 tracing = { workspace = true }
 bevy_ecs = { workspace = true }
+bevy_math = { workspace = true }
 uuid = { workspace = true }
 rand = { workspace = true }
 
