@@ -7,7 +7,6 @@ pub mod section;
 pub mod vanilla_chunk_format;
 
 use crate::errors::WorldError;
-// use crate::heightmap::Heightmaps;
 use crate::section::{AIR, ChunkSection};
 use dashmap::DashMap;
 use serde_derive::{Deserialize, Serialize};
@@ -28,7 +27,6 @@ pub struct Chunk {
     #[type_hash(foreign_type)]
     pub entities: DashMap<Uuid, (EntityTypeEnum, Vec<u8>)>,
 
-    // heightmaps: Option<Heightmaps>,
     dirty: Arc<AtomicBool>,
 }
 
@@ -262,10 +260,6 @@ impl TryFrom<&VanillaChunk> for Chunk {
         let mut chunk = Chunk {
             sections: sections.into_boxed_slice(),
             height: ChunkHeight::new(-64, 384),
-            // heightmaps: value
-            //     .heightmaps
-            //     .as_ref()
-            //     .and_then(|v| Heightmaps::try_from(v).ok()),
             entities: DashMap::new(),
             dirty: Arc::new(AtomicBool::new(false)),
         };
