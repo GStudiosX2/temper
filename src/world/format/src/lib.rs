@@ -7,7 +7,7 @@ pub mod section;
 pub mod vanilla_chunk_format;
 
 use crate::errors::WorldError;
-use crate::heightmap::Heightmaps;
+// use crate::heightmap::Heightmaps;
 use crate::section::{AIR, ChunkSection};
 use dashmap::DashMap;
 use serde_derive::{Deserialize, Serialize};
@@ -28,7 +28,7 @@ pub struct Chunk {
     #[type_hash(foreign_type)]
     pub entities: DashMap<Uuid, (EntityTypeEnum, Vec<u8>)>,
 
-    heightmaps: Option<Heightmaps>,
+    // heightmaps: Option<Heightmaps>,
     dirty: Arc<AtomicBool>,
 }
 
@@ -59,7 +59,7 @@ impl Chunk {
                 .into_boxed_slice(),
             height,
             entities: DashMap::new(),
-            heightmaps: None,
+            // heightmaps: None,
             dirty: Arc::new(AtomicBool::new(false)),
         }
     }
@@ -84,7 +84,7 @@ impl Chunk {
         Self {
             sections: sections.to_vec().into_boxed_slice(),
             height,
-            heightmaps: None,
+            // heightmaps: None,
             entities: DashMap::new(),
             dirty: Arc::new(AtomicBool::new(false)),
         }
@@ -161,6 +161,22 @@ impl Chunk {
         self.sections[section as usize].set_block(pos.section_block_pos(), id);
     }
 
+    /// Recalculate Heightmaps
+    pub fn recalculate_heightmaps(&mut self) {
+        for section in self.sections.iter_mut().rev() {
+            for x in 0..=15 {
+                for z in 0..=15 {
+                    for y in (0..=15).rev() {
+                        if section.get_block(ChunkBlockPos::new(x, y as i16, z).section_block_pos()) != AIR {
+                            section.world_surface.set_height(x, z, y as u8 + 1);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+    
     /// Get heightmap for entire chunk
     pub fn get_full_heightmap(&self) -> [i16; 256usize] {
         let mut heightmap = [0i16; 256];
@@ -243,16 +259,20 @@ impl TryFrom<&VanillaChunk> for Chunk {
             sections[(section.y + 4).clamp(0, 23) as usize] = ChunkSection::try_from(section)?;
         }
 
-        Ok(Chunk {
+        let mut chunk = Chunk {
             sections: sections.into_boxed_slice(),
             height: ChunkHeight::new(-64, 384),
-            heightmaps: value
-                .heightmaps
-                .as_ref()
-                .and_then(|v| Heightmaps::try_from(v).ok()),
+            // heightmaps: value
+            //     .heightmaps
+            //     .as_ref()
+            //     .and_then(|v| Heightmaps::try_from(v).ok()),
             entities: DashMap::new(),
             dirty: Arc::new(AtomicBool::new(false)),
-        })
+        };
+
+        // calculate heightmaps
+        chunk.recalculate_heightmaps();
+        Ok(chunk)
     }
 }
 

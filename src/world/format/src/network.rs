@@ -18,7 +18,7 @@ impl TryFrom<&Chunk> for NetworkChunk {
     type Error = NetEncodeError;
 
     fn try_from(chunk: &Chunk) -> Result<Self, Self::Error> {
-        let heightmaps = Heightmaps::get_network_repr(&chunk.heightmaps);
+        let heightmaps = Heightmaps::get_network_repr(&chunk.get_full_heightmap());
         let mut data = Cursor::new(vec![]);
 
         for section in chunk.sections.iter() {
