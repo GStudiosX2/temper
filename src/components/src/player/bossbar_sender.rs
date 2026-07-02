@@ -23,7 +23,12 @@ impl BossbarSender {
     }
 
     pub fn update(&mut self, uuid: Uuid) {
-        self.0.insert(uuid, BossbarSenderState::Update);
+        if matches!(
+            self.0.get(&uuid),
+            Some(BossbarSenderState::Informed | BossbarSenderState::Update)
+        ) {
+            self.0.insert(uuid, BossbarSenderState::Update);
+        }
     }
 
     pub fn remove(&mut self, uuid: Uuid) {
@@ -44,5 +49,32 @@ impl BossbarSender {
 
     pub fn get_state(&self, uuid: Uuid) -> Option<BossbarSenderState> {
         self.0.get(&uuid).cloned()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn update_does_not_start_tracking_unknown_bossbar() {
+        let uuid = Uuid::new_v4();
+        let mut sender = BossbarSender::default();
+
+        sender.update(uuid);
+
+        assert_eq!(sender.get_state(uuid), None);
+    }
+
+    #[test]
+    fn update_marks_informed_bossbar_for_update() {
+        let uuid = Uuid::new_v4();
+        let mut sender = BossbarSender::default();
+
+        sender.add(uuid);
+        sender.informed(uuid);
+        sender.update(uuid);
+
+        assert_eq!(sender.get_state(uuid), Some(BossbarSenderState::Update));
     }
 }

@@ -26,7 +26,7 @@ members = [
     "src/blocks/crates/build",
     "src/blocks/crates/data",
     "src/bin",
-    "src/commands",
+    "src/command-infra",
     "src/components",
     "src/core",
     "src/dashboard",
@@ -129,7 +129,6 @@ temper-block-data = { path = "src/blocks/crates/data" }
 temper-config = { path = "src/config" }
 temper-core = { path = "src/core" }
 temper-default-commands = { path = "src/default_commands" }
-temper-commands = { path = "src/commands" }
 temper-general-purpose = { path = "src/base/general_purpose" }
 temper-logging = { path = "src/base/logging" }
 temper-macros = { path = "src/base/macros" }
@@ -137,6 +136,7 @@ temper-nbt = { path = "src/adapters/nbt" }
 temper-net-runtime = { path = "src/net/runtime" }
 temper-performance = { path = "src/performance" }
 temper-codec = { path = "src/net/codec" }
+temper-command-infra = { path = "src/command-infra" }
 temper-protocol = { path = "src/net/protocol" }
 temper-encryption = { path = "src/net/encryption" }
 temper-profiling = { path = "src/base/profiling" }
@@ -180,7 +180,7 @@ tracing = "0.1.44"
 tracing-subscriber = { version = "0.3.23", features = ["env-filter"] }
 tracing-appender = "0.2.5"
 tracing-tracy = { version = "0.11.4", features = ["timer-fallback", "ondemand", "fibers", "context-switch-tracing", "delayed-init"] }
-log = "0.4.32"
+log = "0.4.33"
 tracy-client = "0.18.4"
 
 # Concurrency/Parallelism
@@ -195,7 +195,7 @@ reqwest = { version = "0.13.4", features = ["json", "native-tls", "blocking", "h
 
 # Error handling
 thiserror = "2.0.18"
-anyhow = "1.0.102"
+anyhow = "1.0.103"
 
 # Cryptography
 rand = "0.10.1"
@@ -228,16 +228,16 @@ byteorder = "1.5.0"
 
 # Data types
 dashmap = { version = "7.0.0-rc2", features = ["serde"] }
-uuid = { version = "1.23.3", features = ["v4", "v3", "serde"] }
+uuid = { version = "1.23.4", features = ["v4", "v3", "serde"] }
 indexmap = { version = "2.14.0", features = ["serde"] }
 bimap = "0.6.3"
-arrayvec = "0.7.6"
+arrayvec = "0.7.7"
 fastcache = "0.1.7"
 
 # Macros
 lazy_static = "1.5.0"
-quote = "1.0.45"
-syn = { version = "2.0.117", features = ["extra-traits"] }
+quote = "1.0.46"
+syn = { version = "2.0.118", features = ["extra-traits", "full"] }
 proc-macro2 = "1.0.106"
 paste = "1.0.15"
 maplit = "1.0.2"
@@ -260,7 +260,7 @@ heed = "0.22.1"
 # Misc
 deepsize = "0.2.0"
 page_size = "0.6.0"
-enum-ordinalize = "4.3.2"
+enum-ordinalize = "4.4.1"
 regex = "1.12.4"
 noise = "0.9.0"
 ctrlc = "3.5.2"
@@ -274,9 +274,9 @@ mime_guess = "2.0.5"
 
 ## TUI/CLI
 crossterm = "0.29.0"
-ratatui-core = "0.1.1"
+ratatui-core = "0.1.2"
 tui-input = "0.15.3"
-ratatui = "0.30.1"
+ratatui = "0.30.2"
 tui-logger = { version = "0.18.2", features = ["tracing-support", "crossterm"] }
 clap = { version = "4.6.1", features = ["derive", "env"] }
 indicatif = "0.18.4"
@@ -285,7 +285,7 @@ unicode-width = "0.2.2"
 heck = "0.5.0"
 
 # I/O
-memmap2 = "0.9.10"
+memmap2 = "0.9.11"
 tempfile = "3.27.0"
 walkdir = "2.5.0"
 include_dir = "0.7.4"
@@ -293,14 +293,14 @@ include_dir = "0.7.4"
 # Benchmarking
 criterion = { version = "0.8.2", features = ["html_reports"] }
 
-phf = { version = "0.13.1", features = ["macros"] }
-phf_codegen = { version = "0.13.1" }
+phf = { version = "0.14.0", features = ["macros"] }
+phf_codegen = { version = "0.14.0" }
 
 # Web server
 axum = { version = "0.8.9", features = ["tokio", "ws"] }
 
 # Stats
-sysinfo = { version = "0.39.3", default-features = false, features = ["system"] }
+sysinfo = { version = "0.39.5", default-features = false, features = ["system"] }
 dir-size = "0.1.1"
 
 # Compression is a real bottleneck that we can do little about, so compiling it with optimizations is needed in dev mode.

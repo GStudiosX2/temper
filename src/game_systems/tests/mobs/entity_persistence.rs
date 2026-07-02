@@ -39,13 +39,13 @@ fn emit_load_for(
 }
 
 fn emit_spawn_command(
-    player_entity: Entity,
+    location: Position,
     entity_type: EntityTypeEnum,
 ) -> impl FnMut(MessageWriter<SpawnMobCommand>) {
     move |mut writer: MessageWriter<SpawnMobCommand>| {
         writer.write(SpawnMobCommand {
             entity_type,
-            player_entity,
+            location,
         });
     }
 }
@@ -306,14 +306,10 @@ fn spawn_command_cow_survives_registered_shutdown_reload() {
 
     let expected_identity = {
         let mut first_world = ecs_world_with_sync(state.clone());
-        let player = first_world
-            .spawn((player_position, Rotation::new(0.0, 0.0)))
-            .id();
-
         let mut spawn_schedule = Schedule::default();
         spawn_schedule.add_systems(
             (
-                emit_spawn_command(player, EntityTypeEnum::Cow),
+                emit_spawn_command(expected_position, EntityTypeEnum::Cow),
                 player::entity_spawn::spawn_command_processor,
                 handle_spawn_mob_bundle,
             )

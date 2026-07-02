@@ -1,38 +1,50 @@
 use bevy_ecs::change_detection::Res;
 use bevy_ecs::message::MessageWriter;
-use temper_commands::Sender;
-use temper_commands::messages::{CommandDispatched, ResolvedCommandDispatched};
-use temper_commands::resolve::resolve;
+use std::sync::Arc;
+use temper_command_infra::{CommandDispatched, CommandSource};
 use temper_resources::server_command_rx::ServerCommandReceiver;
-use temper_state::GlobalStateResource;
-use tracing::error;
 
 pub fn handle(
     receiver: Res<ServerCommandReceiver>,
     mut dispatch_msgs: MessageWriter<CommandDispatched>,
-    mut resolved_dispatch_msgs: MessageWriter<ResolvedCommandDispatched>,
-    state: Res<GlobalStateResource>,
 ) {
     for command in receiver.0.try_iter() {
-        let sender = Sender::Server;
         dispatch_msgs.write(CommandDispatched {
-            command: command.clone(),
-            sender,
+            input: Arc::from(command),
+            source: CommandSource::Server,
         });
+    }
+}
 
-        let resolved = resolve(command, sender, state.0.clone());
-        match resolved {
-            Err(err) => {
-                error!("Error resolving server command: {}", err.to_plain_text());
-            }
+#[cfg(test)]
+mod tests {
+    use bevy_ecs::message::MessageRegistry;
+    use bevy_ecs::prelude::{Messages, Schedule, World};
+    use std::sync::Arc;
+    use temper_command_infra::{CommandDispatched, CommandSource};
+    use temper_resources::server_command_rx::ServerCommandReceiver;
 
-            Ok((command, ctx)) => {
-                resolved_dispatch_msgs.write(ResolvedCommandDispatched {
-                    command,
-                    ctx,
-                    sender,
-                });
-            }
-        }
+    use super::handle;
+
+    #[test]
+    fn tui_server_commands_emit_dispatch_messages() {
+        let (sender, receiver) = crossbeam_channel::unbounded();
+        sender.send("stop".to_string()).unwrap();
+
+        let mut world = World::new();
+        MessageRegistry::register_message::<CommandDispatched>(&mut world);
+        world.insert_resource(ServerCommandReceiver(receiver));
+
+        let mut schedule = Schedule::default();
+        schedule.add_systems(handle);
+        schedule.run(&mut world);
+
+        let message_resource = world.resource::<Messages<CommandDispatched>>();
+        let mut cursor = message_resource.get_cursor();
+        let messages = cursor.read(message_resource).cloned().collect::<Vec<_>>();
+
+        assert_eq!(messages.len(), 1);
+        assert_eq!(messages[0].input, Arc::from("stop"));
+        assert_eq!(messages[0].source, CommandSource::Server);
     }
 }

@@ -2,6 +2,7 @@ pub mod change_game_mode;
 pub mod chat_message;
 pub mod chunk_batch_ack;
 pub mod command;
+pub mod command_graph;
 pub mod command_suggestions;
 pub mod confirm_player_teleport;
 pub mod keep_alive;

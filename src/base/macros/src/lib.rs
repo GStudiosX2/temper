@@ -4,7 +4,7 @@ use block::matches;
 use proc_macro::TokenStream;
 
 mod block;
-mod commands;
+mod command_derive;
 mod helpers;
 mod item;
 mod misc;
@@ -59,30 +59,10 @@ pub fn lookup_packet(input: TokenStream) -> TokenStream {
 }
 // #=================== PACKETS ===================#
 
-/// Creates a command.
-///
-/// A command function can take a sender argument, multiple command arguments and bevy system arguments.
-///
-/// The optional sender argument is marked with `#[sender]` attribute and command arguments are marked with
-/// the `#[arg]` attribute. Any other argument is treated as a bevy system arg.
-///
-/// Usage example:
-///
-/// ```ignore
-/// #[command("hello")]
-/// fn command(#[sender] sender: Sender) {
-///     sender.send_message(TextComponent::from("Hello, world!"), false);
-/// }
-/// ```
-#[proc_macro_attribute]
-pub fn command(attr: TokenStream, input: TokenStream) -> TokenStream {
-    commands::command(attr, input)
+#[proc_macro_derive(Command, attributes(command, arg, literal, subcommand, permission))]
+pub fn command_derive(input: TokenStream) -> TokenStream {
+    command_derive::derive(input)
 }
-
-// #[proc_macro_attribute]
-// pub fn arg(attr: TokenStream, input: TokenStream) -> TokenStream {
-//     commands::arg(attr, input)
-// }
 
 /// Get a registry entry from the registries.json file.
 /// returns protocol_id (as u64) of the specified entry.

@@ -5,6 +5,7 @@ edition = "2024"
 
 [dependencies]
 bevy_ecs = { workspace = true }
+temper-command-infra = { workspace = true }
 temper-components = { workspace = true }
 temper-config = { workspace = true }
 temper-inventories = { workspace = true }

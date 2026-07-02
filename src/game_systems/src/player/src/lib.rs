@@ -10,6 +10,6 @@ pub mod player_join_message;
 pub mod player_leave_message;
 pub mod player_spawn;
 pub mod player_swimming;
-pub mod player_tp;
 pub mod send_inventory_updates;
+pub mod teleport;
 pub mod update_player_ping;

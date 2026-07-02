@@ -37,6 +37,9 @@ default_gamemode = "creative"
 # https://github.com/pebblehost/hunter/blob/master/ips.txt and updated every 3 hours.
 block_scanner_ips = true
 
+# If enabled, players will have full permissions upon joining. This does not apply to players who have joined before.
+op_by_default = true
+
 # Database configuration
 [database]
 # Path to the world database

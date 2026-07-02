@@ -354,7 +354,7 @@ pub async fn handle_connection(
             client_information_component: login_result
                 .client_information_component
                 .unwrap_or_default(),
-            permissions: login_result.permissions.unwrap_or_default(),
+            permissions: login_result.permissions.unwrap(),
         })
         .map_err(|_| NetError::Misc("Failed to register new connection".to_string()))?;
 

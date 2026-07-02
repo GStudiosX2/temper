@@ -3,7 +3,6 @@ use bevy_ecs::schedule::{
     IntoScheduleConfigs, MultiThreadedExecutor, Schedule, SingleThreadedExecutor, SystemSet,
 };
 use std::time::Duration;
-use temper_commands::infrastructure::register_command_systems;
 use temper_scheduler::{MissedTickBehavior, Scheduler, TimedSchedule, drain_registered_schedules};
 
 pub use background::lan_pinger::LanPinger;
@@ -57,6 +56,7 @@ fn register_tick_systems(schedule: &mut Schedule) {
     schedule.add_systems(packets::close_container::handle);
     schedule.add_systems(packets::player_loaded::handle);
     schedule.add_systems(packets::command::handle);
+    schedule.add_systems(packets::command_graph::rebuild_and_send_command_graphs);
     schedule.add_systems(packets::command_suggestions::handle);
     schedule.add_systems(packets::chat_message::handle);
     schedule.add_systems(packets::set_creative_mode_slot::handle);
@@ -93,10 +93,10 @@ fn register_tick_systems(schedule: &mut Schedule) {
     schedule.add_systems(player::player_join_message::handle);
     schedule.add_systems(player::player_leave_message::handle);
     schedule.add_systems(player::player_swimming::detect_player_swimming);
-    schedule.add_systems(player::player_tp::teleport_player);
+    schedule.add_systems(player::teleport::teleport_entities);
     schedule.add_systems(player::send_inventory_updates::handle_inventory_updates);
 
-    register_command_systems(schedule);
+    temper_command_infra::register_command_systems(schedule);
 
     schedule.add_systems(background::chunk_sending::handle.in_set(TickPhase::ChunkSending));
     mobs::register_load_systems(schedule);
